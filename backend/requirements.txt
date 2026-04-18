@@ -1,0 +1,9 @@
+fastapi==0.136.1
+uvicorn==0.46.0
+prometheus-client==0.25.0
+numpy==1.26.4
+Pillow==12.2.0
+pydantic==2.13.3
+requests==2.33.1
+psycopg2-binary
+boto3
