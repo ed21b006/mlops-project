@@ -1,0 +1,21 @@
+# DVC Pipeline Parameters
+# All hyperparameters and thresholds tracked by DVC
+# List values = hyperparameter search 
+# Single values = fixed parameters
+
+train:
+  epochs: [1]
+  learning_rate: [0.001]
+  batch_size: [1]
+  optimizer: ["adam"]
+
+model:
+  conv1_channels: [16]
+  conv2_channels: [32]
+  fc1_units: [10]
+  dropout: [0.25]
+
+evaluate:
+  # Minimum thresholds for model registration
+  min_accuracy: 0.60
+  min_f1_score: 0.60

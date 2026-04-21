@@ -1,0 +1,97 @@
+# DVC CI Pipeline
+# Stages: ingest → transform → train → evaluate → register → deploy
+
+stages:
+  # Stage 1: Data Ingestion
+  # Loads raw MNIST data + feedback from PostgreSQL
+  ingest:
+    cmd: python src/ingest.py
+    deps:
+      - src/ingest.py
+      - data/raw
+    outs:
+      - data/ingested/train.pt
+      - data/ingested/test.pt
+      - data/ingested/joined_train.pt:
+          persist: true
+    plots:
+      - data/ingested/label_distribution.json:
+          x: digit
+          y: count
+
+  # Stage 2: Data Transformation
+  # Splits train/val, computes baseline stats for drift detection
+  transform:
+    cmd: python src/transform.py
+    deps:
+      - src/transform.py
+      - data/ingested/train.pt
+      - data/ingested/test.pt
+    outs:
+      - data/transformed/train.pt
+      - data/transformed/val.pt
+      - data/transformed/test.pt
+      - data/transformed/baseline_stats.json
+
+  # Stage 3: Model Training
+  # Hyperparameter tuning with MLflow nested runs
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - src/model.py
+      - data/transformed/train.pt
+      - data/transformed/val.pt
+    params:
+      - params.yaml:
+          - train
+          - model
+    outs:
+      - models/mnist_cnn.pth
+    metrics:
+      - metrics/train_results.json:
+          cache: false
+
+  # Stage 4: Model Evaluation
+  # Evaluates on test set, saves metrics and confusion matrix
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - src/model.py
+      - models/mnist_cnn.pth
+      - data/transformed/test.pt
+    metrics:
+      - metrics/eval_metrics.json:
+          cache: false
+    plots:
+      - metrics/confusion_matrix.json:
+          x: predicted
+          y: actual
+
+  # Stage 5: Model Registration
+  # Registers model in MLflow
+  register:
+    cmd: python src/register.py
+    deps:
+      - src/register.py
+      - models/mnist_cnn.pth
+      - metrics/eval_metrics.json
+    params:
+      - params.yaml:
+          - evaluate.min_accuracy
+          - evaluate.min_f1_score
+    metrics:
+      - metrics/register_result.json:
+          cache: false
+
+  # Stage 6: Deployment Verification
+  # Verifies model is deployed and accessible via inference server
+  deploy:
+    cmd: python src/deploy.py
+    deps:
+      - src/deploy.py
+      - metrics/register_result.json
+    metrics:
+      - metrics/deploy_result.json:
+          cache: false

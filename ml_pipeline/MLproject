@@ -1,0 +1,23 @@
+name: mnist_digit_recognition
+
+python_env: requirements.txt
+
+entry_points:
+  main:
+    command: "dvc repro"
+  ingest:
+    command: "python src/ingest.py"
+  transform:
+    command: "python src/transform.py"
+  train:
+    parameters:
+      epochs: {type: int, default: 1}
+      learning_rate: {type: float, default: 0.001}
+      batch_size: {type: int, default: 1}
+    command: "python src/train.py"
+  evaluate:
+    command: "python src/evaluate.py"
+  register:
+    command: "python src/register.py"
+  deploy:
+    command: "python src/deploy.py"

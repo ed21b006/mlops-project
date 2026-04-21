@@ -1,0 +1,15 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.11.0+cpu
+mlflow==3.11.1
+scikit-learn
+numpy
+pyyaml
+Pillow
+matplotlib
+dvc
+fastapi
+uvicorn
+requests
+psycopg2-binary
+boto3
+pytest
