@@ -1,0 +1,5 @@
+numpy==2.4.4
+requests==2.33.1
+scikit-learn==1.8.0
+psycopg2-binary
+boto3
