@@ -1,0 +1,75 @@
+{
+  "title": "MNIST Dashboard",
+  "uid": "mnist-mlops",
+  "editable": true,
+  "refresh": "10s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {
+      "title": "Request Rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+      "targets": [{"expr": "sum(rate(http_requests_total[1m])) by (endpoint)", "legendFormat": "{{endpoint}}"}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}}
+    },
+    {
+      "title": "Latency P50/P95",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
+      "targets": [
+        {"expr": "histogram_quantile(0.50, rate(request_latency_seconds_bucket{endpoint=\"/predict\"}[5m]))", "legendFormat": "P50"},
+        {"expr": "histogram_quantile(0.95, rate(request_latency_seconds_bucket{endpoint=\"/predict\"}[5m]))", "legendFormat": "P95"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}}
+    },
+    {
+      "title": "Data Drift",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 4, "x": 16, "y": 0},
+      "targets": [{"expr": "data_drift_flag"}],
+      "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "OK"}, "1": {"text": "DRIFT"}}}]}}
+    },
+    {
+      "title": "Prediction Accuracy",
+      "type": "gauge",
+      "gridPos": {"h": 8, "w": 4, "x": 20, "y": 0},
+      "targets": [{"expr": "prediction_accuracy"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 1}}
+    },
+    {
+      "title": "Model Confidence",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [{"expr": "rate(model_confidence_score_sum[5m]) / rate(model_confidence_score_count[5m])", "legendFormat": "avg confidence"}]
+    },
+    {
+      "title": "Feedback Count",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [{"expr": "sum(rate(feedback_total[5m])) by (correct)", "legendFormat": "correct={{correct}}"}]
+    },
+    {
+      "title": "Host CPU %",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 16},
+      "targets": [{"expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "legendFormat": "CPU"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "max": 100}}
+    },
+    {
+      "title": "Host Memory %",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 16},
+      "targets": [{"expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100", "legendFormat": "Memory"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "max": 100}}
+    },
+    {
+      "title": "Container CPU",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 16},
+      "targets": [{"expr": "sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[5m])) by (name) * 100", "legendFormat": "{{name}}"}],
+      "fieldConfig": {"defaults": {"unit": "percent"}}
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["mlops"]
+}

@@ -1,0 +1,44 @@
+# Alert rules for error rate and drift detection
+
+groups:
+  - name: mnist_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: sum(rate(http_requests_total{status_code=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Error rate above 5%"
+
+      - alert: DataDriftDetected
+        expr: data_drift_flag == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Data drift detected"
+
+      - alert: LowAccuracy
+        expr: prediction_accuracy < 0.8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Model accuracy below 80%"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(request_latency_seconds_bucket{endpoint="/predict"}[5m])) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 latency above 200ms"
+
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend is down"
