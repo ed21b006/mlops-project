@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Pipeline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">🧠 DigitAI</div>
+        <div class="nav-links">
+            <a href="predict.html">Predict</a>
+            <a href="index.html" class="active">Dashboard</a>
+            <a href="http://localhost:5000" target="_blank">MLflow</a>
+            <a href="http://localhost:3000" target="_blank">Grafana</a>
+        </div>
+        <div class="status" id="api-status">
+            <span class="dot" id="status-dot"></span>
+            <span id="status-text">Checking...</span>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1>Developer Dashboard</h1>
+        <p class="subtitle">Pipeline stages and tool links</p>
+
+        <!-- pipeline stages -->
+        <div class="card" style="margin-bottom:1.5rem">
+            <h2>Pipeline Stages (DVC)</h2>
+            <p class="small-text" style="margin-bottom:1rem">
+                Each experiment is reproducible via its Git commit hash. Run <code>dvc repro</code> to reproduce.
+            </p>
+            <div class="pipeline-flow">
+                <div class="stage">📥 Ingest<br><span>DVC + Python</span></div>
+                <span class="arrow">→</span>
+                <div class="stage">🏋️ Train<br><span>CNN + MLflow</span></div>
+                <span class="arrow">→</span>
+                <div class="stage">📊 Evaluate<br><span>Metrics + Registry</span></div>
+                <span class="arrow">→</span>
+                <div class="stage">🚀 Deploy<br><span>FastAPI + Docker</span></div>
+                <span class="arrow">→</span>
+                <div class="stage">👁️ Monitor<br><span>Prometheus</span></div>
+            </div>
+        </div>
+
+        <!-- tool links -->
+        <h2 style="margin-bottom:1rem">Tool Dashboards</h2>
+        <div class="tools-grid">
+            <div class="card">
+                <h3>📈 MLflow</h3>
+                <p class="small-text">Experiment tracking, params, metrics, model registry</p>
+                <a href="http://localhost:5000" target="_blank" class="tool-link">Open MLflow →</a>
+            </div>
+            <div class="card">
+                <h3>🌊 Airflow</h3>
+                <p class="small-text">Data engineering DAGs, feedback pipeline</p>
+                <a href="http://localhost:8080" target="_blank" class="tool-link">Open Airflow →</a>
+            </div>
+            <div class="card">
+                <h3>🔥 Prometheus</h3>
+                <p class="small-text">Metrics collection, alerting rules</p>
+                <a href="http://localhost:9090" target="_blank" class="tool-link">Open Prometheus →</a>
+            </div>
+            <div class="card">
+                <h3>📊 Grafana</h3>
+                <p class="small-text">Real-time dashboards, system monitoring</p>
+                <a href="http://localhost:3000" target="_blank" class="tool-link">Open Grafana →</a>
+            </div>
+            <div class="card">
+                <h3>⚡ FastAPI Docs</h3>
+                <p class="small-text">Interactive API docs (Swagger)</p>
+                <a href="http://localhost:8000/docs" target="_blank" class="tool-link">Open Swagger →</a>
+            </div>
+            <div class="card">
+                <h3>🐳 cAdvisor</h3>
+                <p class="small-text">Container CPU/memory monitoring</p>
+                <a href="http://localhost:8081" target="_blank" class="tool-link">Open cAdvisor →</a>
+            </div>
+        </div>
+
+        <h2 style="margin:1.5rem 0 1rem">API Endpoints</h2>
+        <div class="tools-grid">
+            <div class="card">
+                <h3>Backend API</h3>
+                <p class="small-text">Prediction, feedback, and Prometheus metrics.</p>
+                <div class="small-text">
+                    <div><a href="/health" class="tool-link">GET /health</a></div>
+                    <div><a href="/ready" class="tool-link">GET /ready</a></div>
+                    <div><a href="/metrics" class="tool-link">GET /metrics</a></div>
+                    <div><a href="/feedback_stats" class="tool-link">GET /feedback_stats</a></div>
+                    <div class="small-text">POST /predict</div>
+                    <div class="small-text">POST /submit_feedback</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Pipeline API</h3>
+                <p class="small-text">DVC pipeline manager endpoints.</p>
+                <div class="small-text">
+                    <div><a href="/pipeline/health" class="tool-link">GET /pipeline/health</a></div>
+                    <div><a href="/pipeline/metrics" class="tool-link">GET /pipeline/metrics</a></div>
+                    <div><a href="/pipeline/status" class="tool-link">GET /pipeline/status</a></div>
+                    <div><a href="/pipeline/dag" class="tool-link">GET /pipeline/dag</a></div>
+                    <div><a href="/pipeline/baseline_stats" class="tool-link">GET /pipeline/baseline_stats</a></div>
+                    <div class="small-text">POST /pipeline/retrain</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>MLOps Course Project — ML Pipeline Dashboard</footer>
+
+    <style>
+        .pipeline-flow {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;
+        }
+        .stage {
+            padding: 0.75rem 1rem; background: #0f172a; border: 1px solid #334155;
+            border-radius: 8px; text-align: center; font-size: 0.85rem; min-width: 110px;
+        }
+        .stage span { font-size: 0.7rem; color: #64748b; }
+        .arrow { color: #4f46e5; font-size: 1.2rem; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .tool-link {
+            display: inline-block; margin-top: 0.5rem; color: #818cf8;
+            text-decoration: none; font-size: 0.85rem; font-weight: 600;
+        }
+        .tool-link:hover { text-decoration: underline; }
+        code { color: #818cf8; background: #0f172a; padding: 0.1rem 0.4rem; border-radius: 3px; }
+    </style>
+
+    <script>
+        async function checkHealth() {
+            try {
+                const r = await fetch('/health', { signal: AbortSignal.timeout(5000) });
+                document.getElementById('status-dot').className = r.ok ? 'dot online' : 'dot offline';
+                document.getElementById('status-text').textContent = r.ok ? 'Online' : 'Error';
+            } catch {
+                document.getElementById('status-dot').className = 'dot offline';
+                document.getElementById('status-text').textContent = 'Offline';
+            }
+        }
+        checkHealth();
+        setInterval(checkHealth, 15000);
+    </script>
+</body>
+</html>

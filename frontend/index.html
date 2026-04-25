@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Handwritten digit recognition using CNN on MNIST">
+    <title>Digit Recognition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="brand">🧠 DigitAI</div>
+
+    </nav>
+
+    <main class="container">
+        <h1>Handwritten Digit Recognition</h1>
+        <p class="subtitle">Draw a digit on the canvas and click Predict</p>
+
+        <div class="app-grid">
+            <!-- drawing side -->
+            <div class="card">
+                <h2>Draw a Digit</h2>
+                <div class="canvas-wrap">
+                    <canvas id="draw-canvas" width="280" height="280"></canvas>
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-primary" id="predict-btn" onclick="handlePredict()">Predict</button>
+                    <button class="btn btn-secondary" id="clear-btn" onclick="handleClear()">Clear</button>
+                </div>
+                <div class="brush-control">
+                    <label for="brush-size">Brush:</label>
+                    <input type="range" id="brush-size" min="8" max="28" value="16">
+                    <span id="brush-value">16</span>
+                </div>
+            </div>
+
+            <!-- result side -->
+            <div class="card">
+                <h2>Result</h2>
+                <div id="result-placeholder" class="placeholder">
+                    <p>Draw something and click Predict</p>
+                </div>
+                <div id="result-content" class="hidden">
+                    <div class="big-digit">
+                        <span class="label">Predicted</span>
+                        <span class="digit" id="predicted-digit">-</span>
+                        <span class="conf-badge" id="conf-badge">--%</span>
+                    </div>
+                    <div id="chart-bars" class="chart-bars"></div>
+                    <div class="meta-row">
+                        <div class="meta-item">
+                            <span class="meta-label">Latency</span>
+                            <span id="latency-val">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <h3>Submit Correct Digit</h3>
+                <p class="small-text">If the prediction was wrong, click the right digit:</p>
+                <div class="feedback-grid" id="feedback-grid"></div>
+                <div id="feedback-msg" class="hidden feedback-msg"></div>
+            </div>
+        </div>
+
+        <!-- stats -->
+        <div class="stats-row">
+            <div class="stat"><span id="stat-predictions">0</span><br>Predictions</div>
+            <div class="stat"><span id="stat-latency">--</span><br>Avg Latency</div>
+        </div>
+    </main>
+
+    <footer>MLOps Course Project — MNIST Digit Recognition</footer>
+
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
